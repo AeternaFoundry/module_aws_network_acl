@@ -1,0 +1,40 @@
+resource "aws_network_acl" "network_acls" {
+  for_each = var.network_acls
+
+  vpc_id     = each.value.vpc_id
+  region     = each.value.region
+  subnet_ids = each.value.subnet_ids
+  tags       = each.value.tags
+  tags_all   = each.value.tags_all
+
+  dynamic "egress" {
+    for_each = each.value.egress != null ? each.value.egress : []
+    content {
+      action          = egress.value.action
+      cidr_block      = egress.value.cidr_block
+      from_port       = egress.value.from_port
+      icmp_code       = egress.value.icmp_code
+      icmp_type       = egress.value.icmp_type
+      ipv6_cidr_block = egress.value.ipv6_cidr_block
+      protocol        = egress.value.protocol
+      rule_no         = egress.value.rule_no
+      to_port         = egress.value.to_port
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = each.value.ingress != null ? each.value.ingress : []
+    content {
+      action          = ingress.value.action
+      cidr_block      = ingress.value.cidr_block
+      from_port       = ingress.value.from_port
+      icmp_code       = ingress.value.icmp_code
+      icmp_type       = ingress.value.icmp_type
+      ipv6_cidr_block = ingress.value.ipv6_cidr_block
+      protocol        = ingress.value.protocol
+      rule_no         = ingress.value.rule_no
+      to_port         = ingress.value.to_port
+    }
+  }
+}
+
